@@ -1,0 +1,2 @@
+*.wdb !text !filter !merge !diff
+*.vcd !text !filter !merge !diff
