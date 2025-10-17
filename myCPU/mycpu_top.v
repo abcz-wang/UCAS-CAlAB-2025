@@ -32,7 +32,7 @@ wire         ID_to_EX_valid;
 wire         EX_to_MEM_valid;
 wire         MEM_to_WB_valid;
 wire [63:0] IF_to_ID_bus;
-wire [147:0] ID_to_EX_bus;
+wire [153:0] ID_to_EX_bus;
 wire [70:0] EX_to_MEM_bus;
 wire [69:0] MEM_to_WB_bus;
 wire [37:0] WB_to_ID_bus;
