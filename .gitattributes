@@ -1,2 +1,5 @@
 *.wdb !text !filter !merge !diff
 *.vcd !text !filter !merge !diff
+*.pdf filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.tar.gz filter=lfs diff=lfs merge=lfs -text

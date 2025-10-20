@@ -1,0 +1,25 @@
+0.6
+2019.2
+Nov  6 2019
+21:57:16
+D:/CALab/cdp_ede_local/output/exp10/myCPU/alu.v,1760612201,verilog,,D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/BRIDGE/bridge_1x2.v,,alu,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/myCPU/divider.v,1760618371,verilog,,D:/CALab/cdp_ede_local/output/exp10/myCPU/ex.v,,divider,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/myCPU/ex.v,1760619712,verilog,,D:/CALab/cdp_ede_local/output/exp10/myCPU/id.v,,ex_stage,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/myCPU/id.v,1760616731,verilog,,D:/CALab/cdp_ede_local/output/exp10/myCPU/if.v,,id_stage,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/myCPU/if.v,1760593782,verilog,,D:/CALab/cdp_ede_local/output/exp10/myCPU/me.v,,if_stage,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/myCPU/me.v,1760533796,verilog,,D:/CALab/cdp_ede_local/output/exp10/myCPU/mycpu_top.v,,mem_stage,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/myCPU/mycpu_top.v,1760597790,verilog,,D:/CALab/cdp_ede_local/output/exp10/myCPU/regfile.v,,mycpu_top,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/myCPU/regfile.v,1758024749,verilog,,D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/soc_lite_top.v,,regfile,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/myCPU/tools.v,1687313206,verilog,,D:/CALab/cdp_ede_local/output/exp10/myCPU/wb.v,,decoder_2_4;decoder_4_16;decoder_5_32;decoder_6_64,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/myCPU/wb.v,1760533867,verilog,,D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/testbench/mycpu_tb.v,,wb_stage,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/BRIDGE/bridge_1x2.v,1758024822,verilog,,D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/CONFREG/confreg.v,,bridge_1x2,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/CONFREG/confreg.v,1758024822,verilog,,D:/CALab/cdp_ede_local/output/exp10/myCPU/divider.v,,confreg,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/soc_lite_top.v,1758024822,verilog,,D:/CALab/cdp_ede_local/output/exp10/myCPU/tools.v,,soc_lite_top,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/xilinx_ip/clk_pll/clk_pll.v,1760616875,verilog,,D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/xilinx_ip/data_ram/sim/data_ram.v,,clk_pll,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/xilinx_ip/clk_pll/clk_pll_clk_wiz.v,1760616875,verilog,,D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/xilinx_ip/clk_pll/clk_pll.v,,clk_pll_clk_wiz,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/xilinx_ip/data_ram/sim/data_ram.v,1760616893,verilog,,D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/xilinx_ip/inst_ram/sim/inst_ram.v,,data_ram,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/rtl/xilinx_ip/inst_ram/sim/inst_ram.v,1760616922,verilog,,D:/CALab/cdp_ede_local/output/exp10/myCPU/alu.v,,inst_ram,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
+D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/run_vivado/project/loongson.sim/sim_1/behav/xsim/glbl.v,1573089660,verilog,,,,glbl,,,,,,,,
+D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/run_vivado/project/loongson.srcs/sources_1/ip/mydiv/sim/mydiv.vhd,1760602336,vhdl,,,,mydiv,,,,,,,,
+D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/run_vivado/project/loongson.srcs/sources_1/ip/myudiv/sim/myudiv.vhd,1760618006,vhdl,,,,myudiv,,,,,,,,
+D:/CALab/cdp_ede_local/output/exp10/soc_verify/soc_bram/testbench/mycpu_tb.v,1758024822,verilog,,,,tb_top,,,../../../../../../rtl/xilinx_ip/clk_pll,,,,,
