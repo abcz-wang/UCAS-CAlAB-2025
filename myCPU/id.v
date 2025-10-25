@@ -6,7 +6,7 @@ module id_stage(
     input       wire                    IF_to_ID_valid,
     input wire  [63:0] IF_to_ID_bus  ,
     output       wire                   ID_to_EX_valid,
-    output wire [153:0] ID_to_EX_bus  ,
+    output wire [159:0] ID_to_EX_bus  ,
     output wire [32:0] ID_to_IF_bus        ,
     input  wire [37:0] WB_to_ID_bus,
     input   wire        EX_to_ID_load_up,
@@ -91,6 +91,17 @@ wire        inst_div_w;    //task_10
 wire        inst_mod_w;    //task_10
 wire        inst_div_wu;   //task_10
 wire        inst_mod_wu;  //task_10
+wire        inst_blt;    //task_11
+wire        inst_bge;    //task_11
+wire        inst_bltu;   //task_11
+wire        inst_bgeu;   //task_11
+wire        inst_ld_b;   //task_11
+wire        inst_ld_h;   //task_11
+wire        inst_ld_bu;  //task_11
+wire        inst_ld_hu;  //task_11
+wire        inst_st_b;   //task_11
+wire        inst_st_h;   //task_11
+
 
 wire        need_ui5;
 wire 		need_ui12;
@@ -110,7 +121,6 @@ wire [31:0] rf_wdata;
 
 wire [31:0] alu_src1   ;
 wire [31:0] alu_src2   ;
-wire [31:0] alu_result ;
 
 wire [31:0] mem_result;
 wire [31:0] final_result;
@@ -122,7 +132,6 @@ wire no_rd;
 wire rj_wait;
 wire rk_wait;
 wire rd_wait;
-wire no_wait;
 wire load_stall;
 
 wire [4:0]   EX_to_ID_dest;
@@ -196,10 +205,23 @@ assign inst_mod_w   = op_31_26_d[6'h00] & op_25_22_d[4'h0] & op_21_20_d[2'h2] & 
 assign inst_div_wu  = op_31_26_d[6'h00] & op_25_22_d[4'h0] & op_21_20_d[2'h2] & op_19_15_d[5'h02]; 
 assign inst_mod_wu  = op_31_26_d[6'h00] & op_25_22_d[4'h0] & op_21_20_d[2'h2] & op_19_15_d[5'h03]; 
 
+//task_11 Add the following instructions
+assign inst_blt    = op_31_26_d[6'h18];
+assign inst_bge    = op_31_26_d[6'h19];
+assign inst_bltu   = op_31_26_d[6'h1A];
+assign inst_bgeu   = op_31_26_d[6'h1B];
+
+assign inst_ld_b   = op_31_26_d[6'h0a] & op_25_22_d[4'h0];
+assign inst_ld_h   = op_31_26_d[6'h0a] & op_25_22_d[4'h1];
+assign inst_ld_bu  = op_31_26_d[6'h0a] & op_25_22_d[4'h8];
+assign inst_ld_hu  = op_31_26_d[6'h0a] & op_25_22_d[4'h9];
+assign inst_st_b   = op_31_26_d[6'h0a] & op_25_22_d[4'h4];
+assign inst_st_h   = op_31_26_d[6'h0a] & op_25_22_d[4'h5];
 
 
-assign alu_op[ 0] = inst_add_w | inst_addi_w | inst_ld_w | inst_st_w
-                    | inst_jirl | inst_bl |inst_pcaddu12i; 
+
+assign alu_op[ 0] = inst_add_w | inst_addi_w | inst_ld_w | inst_st_w | inst_st_b | inst_st_h
+                    | inst_jirl | inst_bl |inst_pcaddu12i | inst_ld_b | inst_ld_h | inst_ld_bu | inst_ld_hu | inst_st_b | inst_st_h; 
 assign alu_op[ 1] = inst_sub_w;
 assign alu_op[ 2] = inst_slt | inst_slti;
 assign alu_op[ 3] = inst_sltu | inst_sltui;
@@ -219,14 +241,22 @@ wire is_div_mod_s = inst_div_w | inst_mod_w ;
 wire is_div_mod_u = inst_div_wu | inst_mod_wu;
 wire div_or_mod = inst_div_w | inst_div_wu;//若为除法，置为1，否则为mod,置为0
 
+wire is_ld_b = inst_ld_b;
+wire is_ld_h = inst_ld_h;
+wire is_ld_bu = inst_ld_bu;
+wire is_ld_hu = inst_ld_hu;
+wire is_st_b = inst_st_b;
+wire is_st_h = inst_st_h;
+
+
 
 assign need_ui5   =  inst_slli_w | inst_srli_w | inst_srai_w;
 
 
 assign need_ui12  =  inst_andi | inst_ori | inst_xori;
-assign need_si12  =  inst_addi_w | inst_ld_w | inst_st_w
-				| inst_slti | inst_sltui;
-assign need_si16  =  inst_jirl | inst_beq | inst_bne;
+assign need_si12  =  inst_addi_w | inst_ld_w | inst_st_w | inst_st_b | inst_st_h
+				| inst_slti | inst_sltui | inst_ld_b | inst_ld_h | inst_ld_bu | inst_ld_hu;
+assign need_si16  =  inst_jirl | inst_beq | inst_bne | inst_blt | inst_bge | inst_bltu | inst_bgeu;
 assign need_si20  =  inst_lu12i_w | inst_pcaddu12i;
 assign need_si26  =  inst_b | inst_bl;
 assign src2_is_4  =  inst_jirl | inst_bl;
@@ -242,30 +272,40 @@ assign br_offs = need_si26 ? {{ 4{i26[25]}}, i26[25:0], 2'b0} :
 
 assign jirl_offs = {{14{i16[15]}}, i16[15:0], 2'b0};
 
-assign src_reg_is_rd = inst_beq | inst_bne | inst_st_w;
+assign src_reg_is_rd = inst_beq | inst_bne | inst_st_w | inst_st_b | inst_st_h | inst_blt | inst_bge | inst_bltu | inst_bgeu;
 
 assign src1_is_pc    = inst_jirl | inst_bl | inst_pcaddu12i;
 
-assign src2_is_imm   = inst_slli_w |
-                       inst_srli_w |
-                       inst_srai_w |
-                       inst_addi_w |
-                       inst_ld_w   |
-                       inst_st_w   |
-                       inst_lu12i_w|
-                       inst_jirl   |
-                       inst_bl     |
-                       inst_slti   | 
-                       inst_sltui  | 
-                       inst_andi   |
-                       inst_ori    |
-                       inst_xori   |
-                       inst_pcaddu12i;
+assign src2_is_imm   = inst_slli_w   |
+                       inst_srli_w   |
+                       inst_srai_w   |
+                       inst_addi_w   |
+                       inst_ld_w     |
+                       inst_st_w     |
+                       inst_st_b     |
+                       inst_st_h     |
+                       inst_lu12i_w  |
+                       inst_jirl     |
+                       inst_bl       |
+                       inst_slti     | 
+                       inst_sltui    | 
+                       inst_andi     |
+                       inst_ori      |
+                       inst_xori     |
+                       inst_pcaddu12i|
+                       inst_ld_b     |
+                       inst_ld_h     |
+                       inst_ld_bu    |
+                       inst_ld_hu;
 
-assign res_from_mem  = inst_ld_w;
+assign res_from_mem  = inst_ld_w |
+                       inst_ld_b |
+                       inst_ld_h |
+                       inst_ld_bu|
+                       inst_ld_hu;
 assign dst_is_r1     = inst_bl;
-assign gr_we         = ~inst_st_w & ~inst_beq & ~inst_bne & ~inst_b;
-assign mem_we        = inst_st_w;
+assign gr_we         = ~inst_st_w & ~inst_st_b & ~inst_st_h & ~inst_beq & ~inst_bne & ~inst_b & ~inst_blt & ~inst_bge & ~inst_bltu & ~inst_bgeu;
+assign mem_we        = inst_st_w | inst_st_b | inst_st_h;
 assign dest          = dst_is_r1 ? 5'd1 : rd;
 
 assign rf_raddr1 = rj;
@@ -273,7 +313,7 @@ assign rf_raddr2 = src_reg_is_rd ? rd :rk;
 regfile u_regfile(
     .clk    (clk      ),
     .raddr1 (rf_raddr1),
-    .rdata1 (rf_rdata1),
+    .rdata1 (rf_rdata1),    
     .raddr2 (rf_raddr2),
     .rdata2 (rf_rdata2),
     .we     (rf_we    ),
@@ -291,17 +331,44 @@ assign rkd_value = rk_wait ? ((rk == EX_to_ID_dest && EX_to_ID_we) ? EX_to_ID_re
                     rd_wait ? ((rd == EX_to_ID_dest && EX_to_ID_we) ? EX_to_ID_result :
                              (rd == MEM_to_ID_dest && MEM_to_ID_we) ? MEM_to_ID_result :
                              (rd == WB_to_ID_dest && WB_to_ID_we) ? WB_to_ID_result : rf_rdata2) :
-                    rf_rdata2;
+                            rf_rdata2[31:0];
 assign rj_eq_rd = (rj_value == rkd_value);
 
+
+
+// task11
+
+/* wire [31:0] br_adder_result;
+wire        br_adder_cout;
+
+assign {br_adder_cout, br_adder_result} = rj_value + ~rkd_value + 1'b1;
+assign rj_slt_rd    = (rj_value[31] & ~rkd_value[31])
+                        | ((rj_value[31] ~^ rkd_value[31]) & br_adder_result[31]);
+assign rj_sltu_rd   = ~br_adder_cout; */
+
+wire [31:0] br_adder_result;
+wire        br_adder_cout;
+
+assign {br_adder_cout, br_adder_result} = {1'b0, rj_value} + {1'b0, (~rkd_value)} + 33'b1;
+assign rj_sltu_rd = ~br_adder_cout;
+
+assign rj_slt_rd =
+        ( rj_value[31] & ~rkd_value[31] )
+    | ((rj_value[31] ~^ rkd_value[31]) & br_adder_result[31]);
+
+
 assign br_taken = (   inst_beq  &&  rj_eq_rd
-                   || inst_bne  && !rj_eq_rd
+                   || inst_bne  && ~rj_eq_rd
+                   || inst_blt  &&  rj_slt_rd
+                   || inst_bge  && ~rj_slt_rd
+                   || inst_bltu &&  rj_sltu_rd
+                   || inst_bgeu && ~rj_sltu_rd
                    || inst_jirl
                    || inst_bl
-                   || inst_b
+                   || inst_b    
 )  && ID_valid && ~load_stall;
 
-assign br_target = (inst_beq || inst_bne || inst_bl || inst_b) ? (ID_pc + br_offs) :
+assign br_target = (inst_beq || inst_bne || inst_bl || inst_b || inst_blt || inst_bge || inst_bltu || inst_bgeu) ? (ID_pc + br_offs) :
                                                    /*inst_jirl*/ (rj_value + jirl_offs);
 assign alu_src1 = src1_is_pc  ? ID_pc : rj_value;
 assign alu_src2 = src2_is_imm ? imm : rkd_value;
@@ -329,7 +396,13 @@ assign ID_to_EX_bus = {alu_op       ,
                        res_from_mem ,
 					   is_div_mod_s ,
 					   is_div_mod_u ,
-					   div_or_mod
+					   div_or_mod   ,
+                       is_ld_b      ,
+                       is_ld_h      ,
+                       is_ld_hu     ,
+                       is_ld_bu     ,
+                       is_st_b      ,
+                       is_st_h
                     };
 
 assign {EX_to_ID_we,
@@ -355,12 +428,14 @@ assign ID_to_EX_valid = ID_valid && ID_ready_go;
                 
 
 assign no_rj    = inst_b | inst_bl | inst_lu12i_w | inst_pcaddu12i;
-assign no_rk    = inst_slli_w | inst_srli_w | inst_srai_w | inst_addi_w | inst_ld_w | inst_st_w | inst_jirl | 
+assign no_rk    = inst_slli_w | inst_srli_w | inst_srai_w | inst_addi_w | inst_ld_w | inst_st_w |inst_st_b | inst_st_h | inst_jirl | 
                 inst_b | inst_bl | inst_beq | inst_bne | inst_lu12i_w| 
 				inst_slti | inst_sltui
                 | inst_andi | inst_ori | inst_xori
-                | inst_pcaddu12i;
-assign no_rd    = ~inst_st_w & ~inst_beq & ~inst_bne;//不使用rd作为源操作数
+                | inst_pcaddu12i
+                | inst_blt | inst_bge | inst_bltu | inst_bgeu
+                | inst_ld_b | inst_ld_h | inst_ld_bu | inst_ld_hu;
+assign no_rd    = ~inst_st_w & ~inst_beq & ~inst_bne & ~inst_blt & ~inst_bge & ~inst_bltu & ~inst_bgeu;//不使用rd作为源操作数
 
 assign rj_wait = ~no_rj && (rj != 5'b00000) && ((rj == EX_to_ID_dest) || (rj == MEM_to_ID_dest) || (rj == WB_to_ID_dest));
 assign rk_wait = ~no_rk && (rk != 5'b00000) && ((rk == EX_to_ID_dest) || (rk == MEM_to_ID_dest) || (rk == WB_to_ID_dest));
